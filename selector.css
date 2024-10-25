@@ -1,5 +1,4 @@
 .Select {
-  width: 100%;
   display: table;
   position: relative;
 }
@@ -65,6 +64,7 @@
   width: 100%;
   display: flex;
   border: 1px solid;
+  box-sizing: border-box;
 }
 
 .Select-Display,
