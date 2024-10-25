@@ -1,6 +1,5 @@
 ![image](https://github.com/user-attachments/assets/00594edf-7f37-4dd1-9a8f-ef37f8ec2203)
 
-
 ## 🚀 Getting Started
 
 ```html
@@ -11,14 +10,12 @@
 <script>
 const select = new Select(element, {
   search: true,
-  event: {
-    onclick(value) { ... }
-  },
   options: [
     "Wow!",
-    "So",
-    "Easy 😎"
-  ]
+    { text: "So" },
+    { text: "Easy 😎", value: "easy" },
+  ],
+  onclick(value) { ... },
 });
 </script>
 

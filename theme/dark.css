@@ -1,0 +1,11 @@
+.Select-Display,
+.Selector {
+  background: #0F0F0F;
+  border-color: #212121;
+  color: #f6f6f6;
+}
+
+.Selector-Item:hover,
+.Selector-Item:focus {
+  background: #212121;
+}
