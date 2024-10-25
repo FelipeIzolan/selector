@@ -1,31 +1,33 @@
 function Selector(el, config) {
   this.el = el;
+  this.ul = document.createElement('ul');
+
   this.options = config.options;
   this.onclick = config.onclick;
 
-  this.el.className = "Selector";
-  this.el.style.maxHeight = `${config.height ?? 234}px`;
+  el.className = "Selector";
+  this.ul.className = "Selector-List";
+
+  el.style.maxWidth = config.width ? `${config.width}px` : 'auto';
+  el.style.maxHeight = config.height ? `${config.height}px` : 'auto';
 
   if (config.title) {
-    const title = this._createElement("label", "Title");
+    const title = document.createElement('label')
+    title.className = "Selector-Title";
     title.innerText = config.title;
+    el.append(title);
   }
 
   if (config.search) {
-    const search = this._createElement("input", "Search");
+    const search = document.createElement('input');
+    search.className = "Selector-Search";
     search.placeholder = config.placeholder ?? "Search";
     search.oninput = this.__onInput.bind(this);
+    el.append(search);
   }
 
-  this.ul = this._createElement("ul", "List");
+  el.append(this.ul);
   this.updateOptions();
-}
-
-Selector.prototype._createElement = function(tag, className, parent = this.el) {
-  let el = document.createElement(tag);
-  el.className = `Selector-${className}`;
-  parent.append(el);
-  return el;
 }
 
 Selector.prototype.updateOptions = function(options = this.options) {
@@ -33,8 +35,9 @@ Selector.prototype.updateOptions = function(options = this.options) {
   this.ul.innerHTML = '';
 
   for (let item of this.options) {
-    let li = this._createElement('li', 'Item');
+    let li = document.createElement('li');
 
+    li.className = "Selector-Item";
     li.setAttribute('tabindex', 0);
     li.innerText = item.text ?? item;
     li.dataset.value = item.value ?? li.innerText;
@@ -47,13 +50,13 @@ Selector.prototype.updateOptions = function(options = this.options) {
   }
 }
 
-Selector.prototype.disable = function() {
-  this.el.style.display = 'none';
-}
-
 Selector.prototype.enable = function() {
   this.el.style.display = 'flex';
   this.ul.children[0].focus();
+}
+
+Selector.prototype.disable = function() {
+  this.el.style.display = 'none';
 }
 
 Selector.prototype.toggle = function() {
@@ -61,7 +64,7 @@ Selector.prototype.toggle = function() {
 }
 
 Selector.prototype.__onClick = function(e) {
-  this.onclick(e.target.dataset.value);
+  this.onclick(e.target.dataset.value, e.target.innerText);
 }
 
 Selector.prototype.__onMouseOver = function() {
@@ -100,37 +103,36 @@ Selector.__find = function(el, dir) {
   return Selector.__find(el[dir == -1 ? 'previousSibling' : 'nextSibling'], dir);
 }
 
-// ------------------------------------------------------------------------------------------ //
-
 function Select(el, config) {
   this.el = el;
   this.display = document.createElement('div');
   this.selector = new Selector(document.createElement('div'), config);
 
-  Object.defineProperty(this, 'value', {
-    get() {
-      return this.el.dataset.value;
-    },
-    set(value) {
-      this.display.innerText = value;
-      this.el.dataset.value = value;
-    }
-  });
+  let fc = this.selector.ul.children[0];
 
   el.className = "Select";
+  el.dataset.value = fc.dataset.value;
+  el.style.maxWidth = config.width ? `${config.width}px` : 'auto';
+
   this.display.className = "Select-Display";
-
+  this.display.innerText = fc.innerText;
   this.display.onclick = () => this.selector.toggle();
-  this.selector.onclick = this.__onClick.bind(this);
-  window.addEventListener('click', this.__onClickOutside.bind(this));
 
+  this.selector.onclick = this.__onClick.bind(this);
   this.selector.disable();
-  this.value = config.options[0];
+
   el.append(this.display, this.selector.el);
+
+  window.addEventListener('click', this.__onClickOutside.bind(this));
 }
 
-Select.prototype.__onClick = function(value) {
-  this.value = value;
+Select.prototype.value = function() {
+  return this.el.dataset.value;
+}
+
+Select.prototype.__onClick = function(value, text) {
+  this.el.dataset.value = value;
+  this.display.innerText = text;
   this.selector.disable();
 }
 
