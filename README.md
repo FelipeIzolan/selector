@@ -33,9 +33,11 @@ const select = new Select(element, {
     "Wow!",
     "So",
     "Easy 😎",
-  ],
-  onclick(value) { alert(value); },
+  ]
 });
+```
+```js
+select.value(); // <- get select value
 ```
 
 ### 📃 Selector
